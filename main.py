@@ -5,11 +5,14 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 import json, os
-from utils import init_user_file
+import openai
+from utils import init_user_file, get_secret, generate_message, get_openai_key
 
 app = FastAPI()
 
 DATA_DIR = "user_data"
+
+openai.api_key = get_openai_key()
 
 class CheckIn(BaseModel):
     user_id: str
