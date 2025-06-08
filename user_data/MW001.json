@@ -1,37 +1,26 @@
 {
     "user_id": "MW001",
     "streak_days": 1,
-    "last_checkin": "2025-06-07",
+    "last_checkin": "2025-06-08",
     "check_ins": [
         {
-            "date": "2025-06-07",
-            "duration_mins": 240,
-            "chapters_covered": [
-                "all"
-            ],
-            "questions_done": 0,
-            "mock_done": true,
-            "notes": "first exam done"
-        },
-        {
-            "date": "2025-06-07",
-            "duration_mins": 60,
+            "date": "2025-06-08",
+            "duration_mins": 20,
             "chapters_covered": [
                 "APM Ch1"
             ],
             "questions_done": 0,
             "mock_done": false,
-            "notes": "Good first session"
+            "notes": "Took notes from OpenTuition after drinking a dark fruit."
         }
     ],
     "milestones": {
-        "total_hours": 5.0,
+        "total_hours": 0.33,
         "total_questions": 0,
         "chapters_completed": [
-            "all",
             "APM Ch1"
         ],
-        "mock_exams_done": 1,
+        "mock_exams_done": 0,
         "total_sessions": 0
     }
 }
