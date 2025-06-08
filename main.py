@@ -5,14 +5,11 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 import json, os
-import openai
-from utils import init_user_file, get_secret, generate_message, get_openai_key
+from utils import init_user_file
 
 app = FastAPI()
 
 DATA_DIR = "user_data"
-
-openai.api_key = get_openai_key()
 
 class CheckIn(BaseModel):
     user_id: str
@@ -141,3 +138,29 @@ def get_summary(user_id: str):
         },
         "recent_check_ins": user_data["check_ins"][-3:][::-1]  # Last 3, newest first
     }
+
+@app.post("/reset/{user_id}")
+def reset_user_progress(user_id: str):
+    filepath = f"{DATA_DIR}/{user_id}.json"
+
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_data = {
+        "user_id": user_id,
+        "streak_days": 0,
+        "last_checkin": None,
+        "check_ins": [],
+        "milestones": {
+            "total_hours": 0,
+            "total_questions": 0,
+            "chapters_completed": [],
+            "mock_exams_done": 0,
+            "total_sessions": 0
+        }
+    }
+
+    with open(filepath, "w") as f:
+        json.dump(user_data, f, indent=4)
+
+    return {"message": f"User {user_id}'s progress has been reset."}
