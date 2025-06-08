@@ -1,7 +1,9 @@
 import json
 import os
 from datetime import datetime
-from utils import init_user_file, build_prompt, generate_message, build_summary_string
+from utils import init_user_file, build_prompt, generate_message, build_summary_string, send_motivation_to_sns
+
+SNS_TOPIC_ARN = "arn:aws:sns:eu-west-2:962804303545:study-helper"
 
 def lambda_handler(event, context):
     user_id = event.get("user_id")
@@ -15,15 +17,19 @@ def lambda_handler(event, context):
     try:
         init_user_file(user_id)
         prompt = build_prompt(user_id)
-        message = generate_message(prompt, use_mock=True)  # Flip to True for testing
+        message = generate_message(prompt, use_mock=True)  # Set to False when ready
         summary = build_summary_string(user_id)
+
+        # 🔔 Send motivation via SNS
+        sns_response = send_motivation_to_sns(message, summary, SNS_TOPIC_ARN)
 
         return {
             "statusCode": 200,
             "body": json.dumps({
                 "message": message,
                 "summary": summary,
-                "date": datetime.today().strftime("%Y-%m-%d")
+                "date": datetime.today().strftime("%Y-%m-%d"),
+                "snsMessageId": sns_response.get("MessageId")
             })
         }
 
