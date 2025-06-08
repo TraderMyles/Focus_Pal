@@ -7,11 +7,12 @@ def get_openai_key(secret_name="openapi", region_name="eu-west-2"):
     client = boto3.client("secretsmanager", region_name=region_name)
     try:
         response = client.get_secret_value(SecretId=secret_name)
-        return response["SecretString"]
+        secret_dict = json.loads(response["SecretString"])
+        return secret_dict["openapi"]
     except Exception as e:
         raise RuntimeError(f"Failed to fetch secret: {e}")
 
-# Set the OpenAI API key from AWS Secrets Manager
+# Set the OpenAI API key
 openai.api_key = get_openai_key()
 
 
@@ -65,15 +66,13 @@ def build_prompt(user_id: str):
     )
 
 
-client = openai.OpenAI()
-
 def generate_message(prompt: str, use_mock=True):
     if use_mock:
         return f"[Mock AI Response] Based on prompt: {prompt}"
     
-    # Real API call
-    response = client.chat.completions.create(
-        model="gpt-4o",
+    # Real API call using older SDK
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",  # or "gpt-4" if available
         messages=[
             {"role": "system", "content": "You are a motivational coach for students."},
             {"role": "user", "content": prompt}
@@ -81,7 +80,7 @@ def generate_message(prompt: str, use_mock=True):
         temperature=0.7,
         max_tokens=80
     )
-    return response.choices[0].message.content.strip()
+    return response.choices[0]["message"]["content"].strip()
 
 
 def build_summary_string(user_id: str):
@@ -109,18 +108,27 @@ def build_summary_string(user_id: str):
         f"• Total Sessions: {sessions}"
     )
 
+def send_motivation_to_sns(message: str, summary: str, topic_arn: str):
+    sns_client = boto3.client("sns", region_name="eu-west-2")
+    
+    full_message = f"{message}\n\n{summary}"  # 👈 Combine message + summary
+
+    response = sns_client.publish(
+        TopicArn=topic_arn,
+        Message=full_message,
+        Subject="Your Daily Motivation 💪"
+    )
+    return response
 
 
-# Run if this script is executed directly
 if __name__ == "__main__":
     user_id = "MW001"
 
     prompt = build_prompt(user_id)
     print("📨 Prompt:\n", prompt)
 
-    message = generate_message(prompt)
+    message = generate_message(prompt, use_mock=False)
     print("\n💬 Motivational Message:\n", message)
 
     summary = build_summary_string(user_id)
     print("\n📈 Summary:\n", summary)
-
