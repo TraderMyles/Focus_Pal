@@ -6,7 +6,7 @@ from utils import init_user_file, build_prompt, generate_message, build_summary_
 SNS_TOPIC_ARN = "arn:aws:sns:eu-west-2:962804303545:study-helper"
 
 def lambda_handler(event, context):
-    user_id = event.get("user_id")
+    user_id = event.get("user_id", "MW001")
 
     if not user_id:
         return {
