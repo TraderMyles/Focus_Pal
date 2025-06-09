@@ -1,7 +1,7 @@
 {
     "user_id": "MW001",
     "streak_days": 1,
-    "last_checkin": "2025-06-08",
+    "last_checkin": "2025-06-09",
     "check_ins": [
         {
             "date": "2025-06-08",
@@ -12,13 +12,24 @@
             "questions_done": 0,
             "mock_done": false,
             "notes": "Took notes from OpenTuition after drinking a dark fruit."
+        },
+        {
+            "date": "2025-06-09",
+            "duration_mins": 30,
+            "chapters_covered": [
+                "APM Ch2"
+            ],
+            "questions_done": 0,
+            "mock_done": false,
+            "notes": "Took a little longer to get through still enjoying OpenTuition content"
         }
     ],
     "milestones": {
-        "total_hours": 0.33,
+        "total_hours": 0.8300000000000001,
         "total_questions": 0,
         "chapters_completed": [
-            "APM Ch1"
+            "APM Ch1",
+            "APM Ch2"
         ],
         "mock_exams_done": 0,
         "total_sessions": 0
